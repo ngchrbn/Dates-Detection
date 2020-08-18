@@ -1,0 +1,11 @@
+# Environments
+
+venv/
+
+# Byte-compiled
+
+__pycache__/
+
+# Pycharm configurations
+
+*.idea
