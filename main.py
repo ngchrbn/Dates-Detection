@@ -8,11 +8,9 @@ Then it verifies the validity of a date:
 # All imports
 import datetime
 import re
-import os
-import bs4
-import requests
-
-
+# import os
+# import bs4
+# import requests
 
 # Hold variable used to check if a detected year is great than the current year
 # (if we are in 2020, there can't be 2021)
@@ -23,9 +21,12 @@ current_year = now.year
 months = {
     '01': 'January', '02': 'February', '03': 'March', '04': 'April', '05': 'May',
     '06': 'June', '07': 'July', '08': 'August', '09': 'September', '10': 'October',
-    '11': 'November', '12': 'December'
+    '11': 'November', '12': 'December', '1': 'January', '2': 'February',
+    '3': 'March', '4': 'April', '5': 'May', '6': 'June', '7': 'July',
+    '8': 'August', '9': 'September'
 }
 invalid_dates = {}  # Hold invalid dates and the reason for being invalid
+missing_zero = {}  # Hold dates with missing leading zeros
 
 
 # Function that uses a regex to detect a date in DD/MM/YYYY format
@@ -51,6 +52,14 @@ def validate_date(list_of_dates):
             # month and year if check they are valid
             # Append the invalid ones to the new dictionary
             day, month, year = _.split('/')
+            # Check if there is date with a missing leading zero
+            if int(day) in range(1, 10) and len(day) == 1:
+                if int(month) in range(1, 10) and len(month) == 1:
+                    missing_zero[_] = '0' + day + '/' + '0' + month + '/' + year
+                else:
+                    missing_zero[_] = '0' + _
+            elif int(month) in range(1, 10) and len(month) == 1:
+                missing_zero[_] = day + '/' + '0' + month + '/' + year
             if month not in months.keys():
                 invalid_dates[_] = f'The month {month} doesn\'t exist'
             elif month in ['01', '03', '05', '07', '08', '10', '12']:
@@ -72,10 +81,20 @@ def validate_date(list_of_dates):
                                            f'than 29 days when it is not a leap year'
             if int(year) < 1000 or int(year) > 2999:
                 invalid_dates[_] = f'The year {year} is invalid(it is between 1000 - 2999)'
+
     # After validating the dates, remove the invalid ones from list_of_dates
     for _ in invalid_dates.keys():
         if _ in list_of_dates:
             list_of_dates.remove(_)
+
+    # After validating the dates, update the missing leading zero values
+    # from list_of_dates with the correct ones
+    for _, value in missing_zero.items():
+        if _ in list_of_dates:
+            list_of_dates.remove(_)
+    for value in missing_zero.values():
+        list_of_dates.append(value)
+
 
 # User Menu
 print('Welcome to the date detection program'.center(60, '-'))
@@ -85,10 +104,10 @@ validate_date(dates_list)
 if len(invalid_dates) > 0:
     print('WARNING'.center(13, '!'))
     print('Some dates detected are invalid..')
-    print('Here is the list of the invalid dates')
+    print('\nHere is the list of the invalid dates\n')
     for _, reason in invalid_dates.items():
         print(_, '==>', reason)
-    print('Here is the list of the valid dates detected')
+    print('\nHere is the list of the valid dates detected\n')
     for _ in dates_list:
         print(_, sep=', ')
 else:
