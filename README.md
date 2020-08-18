@@ -9,5 +9,3 @@ Examples:
 ==> April, June, September and November have 30 days
 
 ==> A year greater than the present year is not accepted as valid
-
-TODO: Day is in range (01 - 31[ depending on the month]), the month(01 - 12) and the year (1000 - 2999)

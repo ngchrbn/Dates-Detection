@@ -23,9 +23,10 @@ invalid_dates = {}  # Hold invalid dates and the reason for being invalid
 
 # Function that uses a regex to detect a date in DD/MM/YYYY format
 def detect_date(text):
+    #  ==> date_format_1: DD/MM/YYYY
     with open(f'{text}') as file_obj:
         content = file_obj.read()
-        date_regex = re.compile(r'\d\d/\d\d/\d\d\d\d')
+        date_regex = re.compile(r'[\d]{1,2}/[\d]{1,2}/[\d]{2,4}')
         dates = date_regex.findall(content)
     return dates
 
@@ -42,7 +43,9 @@ def validate_date(list_of_dates):
             # split the string in day, month, year and for each  day, month and year if check they are valid
             # Append the invalid ones to the new dictionary
             day, month, year = _.split('/')
-            if month in ['01', '03', '05', '07', '08', '10', '12']:
+            if month not in months.keys():
+                invalid_dates[_] = f'The month {month} doesn\'t exist'
+            elif month in ['01', '03', '05', '07', '08', '10', '12']:
                 if int(day) > 31:
                     invalid_dates[_] = f'{months[month]} can\'t have more than 31 days'
             elif month in ['04', '06', '09', '11']:
@@ -55,8 +58,8 @@ def validate_date(list_of_dates):
                 else:
                     if int(day) > 28:
                         invalid_dates[_] = f'{months[month]} can\'t have more than 29 days when it is not a leap year'
-            if int(year) > current_year:
-                invalid_dates[_] = f'We are not yet in {year}'
+            if int(year) < 1000 or int(year) > 2999:
+                invalid_dates[_] = f'The year {year} is invalid(it is between 1000 - 2999)'
     # After validating the dates, remove the invalid ones from list_of_dates
     for _ in invalid_dates.keys():
         if _ in list_of_dates:

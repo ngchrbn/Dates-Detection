@@ -1,7 +1,7 @@
 # Environments
 
 venv/
-
+.venv/
 # Byte-compiled
 
 __pycache__/
