@@ -1,7 +1,7 @@
 """
-Date Detection uses regular expression to detect dates in the DD/MM/YYYY format.
+Date Detection uses regular expression to detect date in the DD/MM/YYYY format.
 Then it verifies the validity of a date:
-                        ==> 31/02/2020 doesn't exist but it is detected as a date
+                    ==> 31/02/2020 doesn't exist but it is detected as a date
 ❗ Note that if the day or month is a single digit, it'll have a leading zero.
 """
 
@@ -19,11 +19,11 @@ current_year = now.year
 
 # Dict used to map numbered month to their actual name
 months = {
-    '01': 'January', '02': 'February', '03': 'March', '04': 'April', '05': 'May',
-    '06': 'June', '07': 'July', '08': 'August', '09': 'September', '10': 'October',
-    '11': 'November', '12': 'December', '1': 'January', '2': 'February',
-    '3': 'March', '4': 'April', '5': 'May', '6': 'June', '7': 'July',
-    '8': 'August', '9': 'September'
+    '01': 'January', '02': 'February', '03': 'March', '04': 'April',
+    '05': 'May', '06': 'June', '07': 'July', '08': 'August', '09': 'September',
+    '10': 'October', '11': 'November', '12': 'December', '1': 'January',
+    '2': 'February', '3': 'March', '4': 'April', '5': 'May', '6': 'June',
+    '7': 'July', '8': 'August', '9': 'September'
 }
 invalid_dates = {}  # Hold invalid dates and the reason for being invalid
 missing_zero = {}  # Hold dates with missing leading zeros
@@ -39,7 +39,7 @@ def detect_date(text):
     return dates
 
 
-# Usages: Check if the dates in the list are all valid and retain the valid ones
+# Check if the dates in the list are all valid and retain the valid ones
 def validate_date(list_of_dates):
     """Check if the dates in list are valid which means:
         example: ==> February has 29 or 28 days depending on the year, etc
@@ -49,9 +49,10 @@ def validate_date(list_of_dates):
     else:
         for i, _ in enumerate(list_of_dates):
             # split the string in day, month, year and for each  day,
-            # month and year if check they are valid
-            # Append the invalid ones to the new dictionary
+            # month and year check if they are valid
+            # Append the invalid and missing leading zero to the new dictionary
             day, month, year = _.split('/')
+
             # Check if there is date with a missing leading zero
             if int(day) in range(1, 10) and len(day) == 1:
                 if int(month) in range(1, 10) and len(month) == 1:
@@ -60,27 +61,35 @@ def validate_date(list_of_dates):
                     missing_zero[_] = '0' + _
             elif int(month) in range(1, 10) and len(month) == 1:
                 missing_zero[_] = day + '/' + '0' + month + '/' + year
+
             if month not in months.keys():
                 invalid_dates[_] = f'The month {month} doesn\'t exist'
+
             elif month in ['01', '03', '05', '07', '08', '10', '12']:
                 if int(day) > 31:
-                    invalid_dates[_] = f'{months[month]} can\'t have more than' \
-                                       f' 31 days'
+                    invalid_dates[_] = f'{months[month]} can\'t have more' \
+                                       f' than 31 days'
+
             elif month in ['04', '06', '09', '11']:
                 if int(day) > 30:
-                    invalid_dates[_] = f'{months[month]} can\'t have more than' \
-                                       f' 31 days'
+                    invalid_dates[_] = f'{months[month]} can\'t have more' \
+                                       f' than 31 days'
+
             elif month == '02':
                 if int(year) % 4 == 0:
                     if int(day) > 29:
-                        invalid_dates[_] = f'{months[month]} can\'t have more than' \
-                                           f' 29 days when it is a leap year'
+                        invalid_dates[_] = f'{months[month]} can\'t have ' \
+                                           f' more than 29 days' \
+                                           f' when it is a leap year'
                 else:
                     if int(day) > 28:
-                        invalid_dates[_] = f'{months[month]} can\'t have more ' \
-                                           f'than 29 days when it is not a leap year'
+                        invalid_dates[_] = f'{months[month]} can\'t have ' \
+                                           f'more than 29 days ' \
+                                           f'when it is not a leap year'
+
             if int(year) < 1000 or int(year) > 2999:
-                invalid_dates[_] = f'The year {year} is invalid(it is between 1000 - 2999)'
+                invalid_dates[_] = f'The year {year} is invalid' \
+                                   f'(it is between 1000 - 2999)'
 
     # After validating the dates, remove the invalid ones from list_of_dates
     for _ in invalid_dates.keys():
@@ -96,11 +105,12 @@ def validate_date(list_of_dates):
         list_of_dates.append(value)
 
 
-# User Menu
+# Main Menu
 print('Welcome to the date detection program'.center(60, '-'))
 file = input('Enter a .txt file to detect dates inside it: ')
 dates_list = detect_date(file)
 validate_date(dates_list)
+# Show Warning if invalid_dates not empty
 if len(invalid_dates) > 0:
     print('WARNING'.center(13, '!'))
     print('Some dates detected are invalid..')
