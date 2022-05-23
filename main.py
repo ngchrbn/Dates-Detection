@@ -47,7 +47,7 @@ def validate_date(list_of_dates):
     if len(list_of_dates) == 0:  # check if the list empty
         print('There is no date detected!')
     else:
-        for i, _ in enumerate(list_of_dates):
+        for _ in list_of_dates:
             # split the string in day, month, year and for each  day,
             # month and year check if they are valid
             # Append the invalid and missing leading zero to the new dictionary
@@ -55,12 +55,14 @@ def validate_date(list_of_dates):
 
             # Check if there is date with a missing leading zero
             if int(day) in range(1, 10) and len(day) == 1:
-                if int(month) in range(1, 10) and len(month) == 1:
-                    missing_zero[_] = '0' + day + '/' + '0' + month + '/' + year
-                else:
-                    missing_zero[_] = '0' + _
+                missing_zero[_] = (
+                    f'0{day}/0{month}/{year}'
+                    if int(month) in range(1, 10) and len(month) == 1
+                    else f'0{_}'
+                )
+
             elif int(month) in range(1, 10) and len(month) == 1:
-                missing_zero[_] = day + '/' + '0' + month + '/' + year
+                missing_zero[_] = f'{day}/0{month}/{year}'
 
             if month not in months.keys():
                 invalid_dates[_] = f'The month {month} doesn\'t exist'
@@ -81,11 +83,10 @@ def validate_date(list_of_dates):
                         invalid_dates[_] = f'{months[month]} can\'t have ' \
                                            f' more than 29 days' \
                                            f' when it is a leap year'
-                else:
-                    if int(day) > 28:
-                        invalid_dates[_] = f'{months[month]} can\'t have ' \
-                                           f'more than 29 days ' \
-                                           f'when it is not a leap year'
+                elif int(day) > 28:
+                    invalid_dates[_] = f'{months[month]} can\'t have ' \
+                                       f'more than 29 days ' \
+                                       f'when it is not a leap year'
 
             if int(year) < 1000 or int(year) > 2999:
                 invalid_dates[_] = f'The year {year} is invalid' \
